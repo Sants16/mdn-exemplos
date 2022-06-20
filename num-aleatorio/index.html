@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>Jogo adivinhe o número</title>
+
+    <style>
+      html {
+        font-family: sans-serif;
+      }
+      body {
+        width: 50%;
+        max-width: 800px;
+        min-width: 480px;
+        margin: 0 auto;
+      }
+      .lastResult {
+        color: white;
+        padding: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+      <h1>Jogo adivinhe o número</h1>
+
+      <p>Nós selecionamos um número aleatório entre 1 e 100. Veja se consegue adivinhar em 10 chances ou menos. Nós lhe diremos se seu palpite foi muito alto ou muito baixo.</p>
+
+<div class="form">
+  <label for="campoPalpite">Digite seu palpite: </label><input type="text" id="campoPalpite" class="campoPalpite">
+  <input type="submit" value="Enviar palpite" class="envioPalpite">
+</div>
+
+<div class="resultadoParas">
+  <p class="palpites"></p>
+  <p class="ultimoResultado"></p>
+  <p class="baixoOuAlto"></p>
+</div>
+
+</body>
+
+<script>
+  
+  var numeroAleatorio= Math.floor(Math.random() * 100) + 1; //gera um número aleatorio de 1 a 100
+
+  // referenciam as tags p do html
+var palpites = document.querySelector('.palpites');
+var ultimoResultado = document.querySelector('.ultimoResultado');
+var baixoOuAlto = document.querySelector('.baixoOuAlto');
+
+var envioPalpite = document.querySelector('.envioPalpite'); //referencia o button no html
+var campoPalpite = document.querySelector('.campoPalpite'); //referencia o campo onde o usuario ira digitar o numero
+
+var contagemPalpites = 1; //contador que ira dizer quando tentativas o usuario teve
+var botaoReinicio; //button que ira reiniciar o jogo
+campoPalpite.focus(); //da foco ao campo que usuario ira digitar o numero
+
+function conferirPalpite() {
+  var palpiteUsuario = Number(campoPalpite.value); //pega o valor digitado pelo usuario no campo, converte para Number e armazena na variavel
+  if (contagemPalpites === 1) { //checa se esse é o primeiro palpite do usuario
+    palpites.textContent = 'Palpites anteriores: '; //coloca esse texto na tag p que está vazia, para mostrar ao usuario as suas tentativas
+  }
+  palpites.textContent += palpiteUsuario + ' '; //pega o valor ja adicionado para tag p e junta ao valor que o usuario digitou + um espaço em branco para separar os numeros
+
+  if (palpiteUsuario === numeroAleatorio) { //se o numero que o usuario digitou for igual ao numero gerado o usuario ganha o jogo
+    ultimoResultado.textContent = 'Parabéns! Você acertou!'; //muda o conteudo da tag p para parabenizar o usuario
+    ultimoResultado.style.backgroundColor = 'green'; //muda o fundo do conteudo
+    baixoOuAlto.textContent = ''; //apaga o conteudo da tag p
+    configFimDeJogo(); //finaliza o jogo
+  } else if (contagemPalpites === 10) { //checa se o usuario ja usou suas 10 tentaivas, caso sim o jogo acaba
+    ultimoResultado.textContent = '!!!FIM DE JOGO!!!'; //muda o conteudo da tag p para avisar ao usuario que o jogo acabou
+    baixoOuAlto.textContent = ''; //apaga o conteudo da tag p
+    configFimDeJogo(); //finaliza o jogo
+  } else { // caso nenhuma das condições acima sejam atendidas o jogo seguira normalmente (usuario não acertou o numero mas ainda tem tentativas)
+    ultimoResultado.textContent = 'Errado!'; //avisa ao usuario que ele errou o numero
+    ultimoResultado.style.backgroundColor = 'red'; //muda a cor do conteudo
+    if(palpiteUsuario < numeroAleatorio) { //checa se o numero digitado pelo usuario é MENOR que o numero gerado
+      baixoOuAlto.textContent = 'Seu palpite está muito baixo!'; //caso for MENOR o usuario sera notificado
+    } else if(palpiteUsuario > numeroAleatorio) { //checa se o numero digitado pelo usuario é MAIOR que o numero gerado
+      baixoOuAlto.textContent = 'Seu palpite está muito alto!'; //caso seja MAIOR o usuario sera notificado
+    }
+  }
+
+  contagemPalpites++; //adiciona +1 ao contador de palpites, seja chegar a 10 o jogo acaba como descrito acima
+  campoPalpite.value = ''; //esvazia o campo do texto para que outro valor seja inserido
+  campoPalpite.focus(); //da foco ao campo para facilitar na inserção de um novo numero
+}
+
+envioPalpite.addEventListener('click', conferirPalpite) //adiciona um listener para que quando o button seja clicado a função conferirPalpite seja acionada
+
+function configFimDeJogo() { //função que ira comfigurar o jogo com finalizado
+  campoPalpite.disabled = true; //desativa o campo de texto, sendo impossivel inserir um novo valor
+  envioPalpite.disabled = true; //desativa o button
+  botaoReinicio = document.createElement('button'); //cria um novo button para fazer a reinicialização do jogo
+  botaoReinicio.textContent = 'Iniciar novo jogo'; //adiciona um texto ao button para notificar o que ele faz
+  document.body.appendChild(botaoReinicio); //coloca o button no jogo usando o appendChild
+  botaoReinicio.addEventListener('click', reiniciarJogo); //adiciona um listener ao button para que ao clicar a função reiniciarJogo seja ativada
+}
+
+function reiniciarJogo() { //função que ira reiniciar o jogo
+  contagemPalpites = 1; //retorna o contador de palpites/tentativas ao seu valor inicial
+
+  var reiniciarParas = document.querySelectorAll('.resultadoParas p'); //referencia a div que agrupa todos os paragrafos
+  for (var i = 0 ; i < reiniciarParas.length ; i++) { //esvazia todos os paragrafos
+    reiniciarParas[i].textContent = '';
+  }
+
+  botaoReinicio.parentNode.removeChild(botaoReinicio); //remove o button de reinicio da aplicação
+
+  campoPalpite.disabled = false; //retorna a ativação do campo de texto
+  envioPalpite.disabled = false; //retorna a ativação do button
+  campoPalpite.value = ''; //esvazia o campo de texto para que seja inserido um novo valor
+  campoPalpite.focus(); //da foco ao campo
+
+  ultimoResultado.style.backgroundColor = 'white'; //muda a cor do fundo do conteudo para branco
+
+  numeroAleatorio = Math.floor(Math.random() * 100) + 1; //gera um novo numero aleatorio
+}
+  
+</script>
+</html>
