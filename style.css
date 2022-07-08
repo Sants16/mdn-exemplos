@@ -1,0 +1,17 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    margin: 0;
+    background-color: cadetblue;
+}
+ol{
+    width: 20%;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    flex-direction: column;
+    background-color: azure;
+}
