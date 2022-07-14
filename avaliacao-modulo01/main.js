@@ -39,19 +39,29 @@ randomize.addEventListener('click', result);
 function result() {
 
     let newStory = storyText;
-    let xItem, yItem, zItem = randomValueFromArray();
+    let xItem = randomValueFromArray(insertX); //retorna uma string aleatoria do array
+    let yItem = randomValueFromArray(insertY);
+    let zItem = randomValueFromArray(insertZ);
 
-  if(customName.value !== '') {
+    newStory = newStory.replace(':insertx:', xItem)
+    newStory = newStory.replace(':inserty:', yItem)
+    newStory = newStory.replace(':insertz:', zItem)
+    newStory = newStory.replace(':insertx:', xItem)
+
+  if(customName.value !== '') { //Se um valor foi inserido na entrada de texto customName, substitua Bob na história por esse nome personalizado
     const name = customName.value;
+    newStory = newStory.replace('Bob', name)
 
   }
 
-  if(document.getElementById("uk").checked) {
-    const weight = Math.round(300);
-    const temperature =  Math.round(94);
+  if(document.getElementById("uk").checked) { //verificando se o radio button uk foi selecionado
+    const weight = Math.round(300 * 453,592 ) + ' stone';
+    const temperature =  Math.round((94 - 32) * 5/9) + ' centrigade';
+    newStory = newStory.replace('94 fahrenheit', temperature)
+    newStory = newStory.replace('300 pounds', weight)
 
   }
 
-  story.textContent = //;
+  story.textContent = newStory;
   story.style.visibility = 'visible';
 }
